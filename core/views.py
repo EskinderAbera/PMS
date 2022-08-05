@@ -238,6 +238,7 @@ class UserList(APIView):
             serializer = UserSerializer(user)
             serialized_data = serializer.data
             serialized_data['department'] = user.department.dept_name
+            serialized_data['role'] = user.role.role_name
             if user.subdepartment == None:
                 Users.append(serialized_data)
             else:
