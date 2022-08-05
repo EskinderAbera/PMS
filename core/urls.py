@@ -13,4 +13,5 @@ urlpatterns = [
     path('department/<str:pk>/', department_detail),  
     path('role/', role_list),
     path('role_detail/<str:pk>/', role_detail),
+    path('users/', UserList.as_view()),
 ]
