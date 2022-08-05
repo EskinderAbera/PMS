@@ -195,39 +195,39 @@ class LoginViewSet(ModelViewSet, TokenObtainPairView):
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK) 
 
 
-# class RegistrationViewSet(ModelViewSet, TokenObtainPairView):
-#     serializer_class = RegisterSerializer
-#     permission_classes = (AllowAny,)
-#     http_method_names = ["post"]
+class RegistrationViewSet(ModelViewSet, TokenObtainPairView):
+    serializer_class = RegisterSerializer
+    permission_classes = (AllowAny,)
+    http_method_names = ["post"]
 
-#     def create(self, request, *args, **kwargs):
-#         role = Role.objects.get(role_name = request.data.get("role"))
-#         department = Department.objects.get(dept_name = request.data.get("department"))
-#         subdepartment = SubDepartment.objects.get(name = request.data.get("subdepartment"))
-#         request.data['department'] = department.dept_id
-#         request.data['role'] = role.role_id
-#         request.data['subdepartment'] = subdepartment.id
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = serializer.save()
-#         refresh = RefreshToken.for_user(user)
-#         res = {
-#             "refresh": str(refresh),
-#             "access": str(refresh.access_token),
-#         }
-#         serialized_data = serializer.data
-#         serialized_data['role'] = role.role_name
-#         serialized_data['department'] = department.dept_name
-#         serialized_data['subdepartment'] = subdepartment.name
+    def create(self, request, *args, **kwargs):
+        role = Role.objects.get(role_name = request.data.get("role"))
+        department = Department.objects.get(dept_name = request.data.get("department"))
+        subdepartment = SubDepartment.objects.get(name = request.data.get("subdepartment"))
+        request.data['department'] = department.dept_id
+        request.data['role'] = role.role_id
+        request.data['subdepartment'] = subdepartment.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+        res = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
+        serialized_data = serializer.data
+        serialized_data['role'] = role.role_name
+        serialized_data['department'] = department.dept_name
+        serialized_data['subdepartment'] = subdepartment.name
 
-#         return Response(
-#             {
-#                 "user": serialized_data,
-#                 "refresh": res["refresh"],
-#                 "token": res["access"],
-#             },
-#             status=status.HTTP_201_CREATED,
-#         )
+        return Response(
+            {
+                "user": serialized_data,
+                "refresh": res["refresh"],
+                "token": res["access"],
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 class UserList(APIView):
 

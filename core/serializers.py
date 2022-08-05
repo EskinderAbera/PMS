@@ -3,6 +3,9 @@ from .models import *
 from django.contrib.auth.models import update_last_login
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
+from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.response import Response
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,6 +53,39 @@ class LoginSerializers(TokenObtainPairSerializer):
             update_last_login(None, self.user)
 
         return data
+
+
+class RegisterSerializer(UserSerializer):
+    password = serializers.CharField(
+        max_length=128, min_length=8, write_only=True, required=True
+    )
+    username = serializers.CharField(required=True, max_length=128)
+    is_active = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "password",
+            "username",
+            "department",
+            "role",
+            "subdepartment",
+            "is_active",
+
+        ]
+
+    def create(self, validated_data):
+            try:
+                user = User.objects.get(
+                    username=validated_data["username"])
+            except ObjectDoesNotExist:
+                user = User.objects.create_user(**validated_data)
+                return user
+            else:
+                return Response({"Error": "User already Exist!"}, status=status.HTTP_409_CONFLICT)
 
 
 class KPISerializer(serializers.Serializer):
