@@ -6,6 +6,11 @@ from django.http import Http404, HttpResponse, JsonResponse
 from rest_framework import status
 from .models import *
 from .serializers import *
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
 
@@ -129,3 +134,92 @@ def role_detail(request, pk):
     elif request.method == 'DELETE':
         role.delete()
         return HttpResponse(status=204)
+
+class LoginViewSet(ModelViewSet, TokenObtainPairView):
+    serializer_class = LoginSerializers
+    permission_classes = (AllowAny,)
+    http_method_names = ["post"]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+        serialized_data = serializer.validated_data
+        user = User.objects.get(id = serialized_data['user']['id'])
+        kpis = user.bsc_user.all()
+        KPIS = []
+        for kpi in kpis:
+            actual_aggregate = kpi.January + kpi.February + kpi.March + kpi.April + kpi.May + kpi.June + kpi.July + kpi.August + kpi.September +  kpi.October + kpi.November + kpi.December
+            serializer = KPISerializer(kpi)
+            serialized_data = serializer.data
+            numberOfmonthsLeft = 0
+
+            if(kpi.January<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.February<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.March<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.April<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.May<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.June<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.July<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.August<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.September<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.October<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.November<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            if(kpi.December<=0):
+                numberOfmonthsLeft=numberOfmonthsLeft + 1
+
+            serialized_data['actual_aggregate'] = actual_aggregate
+            serialized_data['perspective_weight'] = kpi.perspective.perspective_weight
+            serialized_data['objective_weight'] = kpi.objective.objective_weight
+            serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
+            KPIS.append(serialized_data)
+        return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK) 
+
+
+# class RegistrationViewSet(ModelViewSet, TokenObtainPairView):
+#     serializer_class = RegisterSerializer
+#     permission_classes = (AllowAny,)
+#     http_method_names = ["post"]
+
+#     def create(self, request, *args, **kwargs):
+#         role = Role.objects.get(role_name = request.data.get("role"))
+#         department = Department.objects.get(dept_name = request.data.get("department"))
+#         subdepartment = SubDepartment.objects.get(name = request.data.get("subdepartment"))
+#         request.data['department'] = department.dept_id
+#         request.data['role'] = role.role_id
+#         request.data['subdepartment'] = subdepartment.id
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.save()
+#         refresh = RefreshToken.for_user(user)
+#         res = {
+#             "refresh": str(refresh),
+#             "access": str(refresh.access_token),
+#         }
+#         serialized_data = serializer.data
+#         serialized_data['role'] = role.role_name
+#         serialized_data['department'] = department.dept_name
+#         serialized_data['subdepartment'] = subdepartment.name
+
+#         return Response(
+#             {
+#                 "user": serialized_data,
+#                 "refresh": res["refresh"],
+#                 "token": res["access"],
+#             },
+#             status=status.HTTP_201_CREATED,
+#         )
