@@ -3,6 +3,8 @@ from .views import *
 
 urlpatterns = [
    path('ceo/kpi/<str:dept>/', GetCEOKPIAPIView.as_view()),
+   path('add/kpi/', AddKPIAPIView.as_view()),
+   path('create/kpi/', CreateKPIAPIView.as_view()),
    path('ceo/perspective/<str:dept>/', CeoPerspectiveAPIView.as_view()),
    path('ceo/objective/<str:dept>/', CeoObjectiveAPIView.as_view()),
    path('vp/kpi/<str:dept>/', GetVPKPIAPIView.as_view()),

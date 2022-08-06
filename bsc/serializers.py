@@ -45,3 +45,15 @@ class KPISerializer(serializers.Serializer):
     November = serializers.FloatField()
     December = serializers.FloatField()
     is_active = serializers.BooleanField()
+
+
+class AddKPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KPI
+        fields = ['kpi_id','kpi_name', 'kpi_weight', 'kpi_target', 'perspective', 'objective', 'kpi_unit_measurement', 'user']
+
+
+class CreateKPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KPI
+        fields = ['kpi_id', 'kpi_name', 'perspective', 'objective', 'kpi_unit_measurement', 'user' ]

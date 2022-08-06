@@ -46,6 +46,7 @@ class GetCEOKPIAPIView(APIView):
                 numberOfmonthsLeft=numberOfmonthsLeft + 1
             serialized_data['actual_aggregate'] = actual_aggregate
             serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
+            serialized_data['user_id'] = user.id
             perspectives = Perspective.objects.filter(perspective_name = serialized_data['perspective'])
             objectives = Objectives.objects.filter(objective_name = serialized_data['objective'])
             for perspective in perspectives:
@@ -55,11 +56,10 @@ class GetCEOKPIAPIView(APIView):
             KPIS.append(serialized_data)
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK)
 
-
 class GetVPKPIAPIView(APIView):
     def get(self, request, dept, format=None):
         department = Department.objects.get(dept_name = dept)
-        user = User.objects.all().get(department = department, subdepartment = None)
+        user = User.objects.get(department = department, subdepartment = None)
         kpis = KPI.objects.all().filter(user = user)
         KPIS = []
         for kpi in kpis:
@@ -95,6 +95,7 @@ class GetVPKPIAPIView(APIView):
             serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
             serialized_data['perspective_weight'] = kpi.perspective.perspective_weight
             serialized_data['objective_weight'] = kpi.objective.objective_weight
+            serialized_data['user_id'] = user.id
             KPIS.append(serialized_data)
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK)
 
@@ -104,7 +105,6 @@ class GetDirectorKPIAPIView(APIView):
         subdepartment = SubDepartment.objects.get(department = department, name = subdept)
         user = User.objects.all().get(department = department, subdepartment = subdepartment.id)
         kpis = KPI.objects.all().filter(user = user)
-        print(len(kpis))
         KPIS = []
         for kpi in kpis:
             actual_aggregate = kpi.January + kpi.February + kpi.March + kpi.April + kpi.May + kpi.June + kpi.July + kpi.August + kpi.September +  kpi.October + kpi.November + kpi.December
@@ -139,8 +139,36 @@ class GetDirectorKPIAPIView(APIView):
             serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
             serialized_data['perspective_weight'] = kpi.perspective.perspective_weight
             serialized_data['objective_weight'] = kpi.objective.objective_weight
+            serialized_data['user_id'] = user.id
             KPIS.append(serialized_data)
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK)
+
+class AddKPIAPIView(APIView):
+    def post(self, request, format=None):
+        serializer = AddKPISerializer(data=request.data)
+
+        if serializer.is_valid():
+            if serializer.validated_data['kpi_unit_measurement'] == "Percentage":
+                serializer.validated_data['kpi_weight'] = float(serializer.validated_data['kpi_weight'])/100
+                serializer.validated_data['kpi_target'] = float(serializer.validated_data['kpi_target'])/100
+                serializer.save()
+                serialized_data = serializer.data
+                return Response(serialized_data, status=status.HTTP_201_CREATED)
+            elif serializer.validated_data['kpi_unit_measurement'] == "ETB" or serializer.validated_data['kpi_unit_measurement'] == "USD" or serializer.validated_data['kpi_unit_measurement'] =="Numbers":
+                serializer.validated_data['kpi_weight'] = float(serializer.validated_data['kpi_weight'])/100
+                serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class CreateKPIAPIView(APIView):
+    def post(self, request, format=None):
+        # data = JSONParser().parse(request)
+        serializer = CreateKPISerializer(data=request.data)
+
+        if serializer.is_valid():   
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class CeoPerspectiveAPIView(APIView):
     def get(self, request, dept, format=None):
@@ -152,17 +180,23 @@ class CeoPerspectiveAPIView(APIView):
             serializer = PerspectiveSerializer(perspective)
             serialized_data = serializer.data
             serialized_data['user'] = perspective.user.username
+            serialized_data['user_id'] = user.id
             newPerspectives.append(serialized_data)
         return Response(newPerspectives, status=status.HTTP_200_OK)
 
 
     def post(self, request, dept, format=None):
-        data = JSONParser().parse(request)
-        serializer = PerspectiveSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(id = request.data.get("user"))
+        except User.DoesNotExist:
+            return Response({"Error": "Invalid user!"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # data = JSONParser().parse(request)
+            serializer = PerspectiveSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
 class CeoObjectiveAPIView(APIView):
@@ -175,13 +209,14 @@ class CeoObjectiveAPIView(APIView):
             serializer = ObjectiveSerializer(objective)
             serialized_data = serializer.data
             serialized_data['user'] = objective.user.username
+            serialized_data['user_id'] = user.id
             newObjectives.append(serialized_data)
         return Response(newObjectives, status=status.HTTP_200_OK)
 
 
     def post(self, request, dept, format=None):
-        data = JSONParser().parse(request)
-        serializer = ObjectiveSerializer(data=data)
+        # data = JSONParser().parse(request)
+        serializer = ObjectiveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -199,13 +234,14 @@ class VPPerspectiveAPIView(APIView):
             serializer = PerspectiveSerializer(perspective)
             serialized_data = serializer.data
             serialized_data['user'] = perspective.user.username
+            serialized_data['user_id'] = user.id
             newPerspectives.append(serialized_data)
         return Response(newPerspectives, status=status.HTTP_200_OK)
 
 
     def post(self, request, dept, role, format=None):
-        data = JSONParser().parse(request)
-        serializer = PerspectiveSerializer(data=data)
+        # data = JSONParser().parse(request)
+        serializer = PerspectiveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -223,14 +259,15 @@ class VPObjectiveAPIView(APIView):
             serializer = ObjectiveSerializer(objective)
             serialized_data = serializer.data
             serialized_data['user'] = objective.user.username
+            serialized_data['user_id'] = user.id
             serialized_data['perspective'] = objective.perspective.perspective_name
             newObjectives.append(serialized_data)
         return Response(newObjectives, status=status.HTTP_200_OK)
 
 
     def post(self, request, dept, role, format=None):
-        data = JSONParser().parse(request)
-        serializer = ObjectiveSerializer(data=data)
+        # data = JSONParser().parse(request)
+        serializer = ObjectiveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -249,13 +286,14 @@ class DirectorPerspectiveAPIView(APIView):
             serializer = PerspectiveSerializer(perspective)
             serialized_data = serializer.data
             serialized_data['user'] = perspective.user.username
+            serialized_data['user_id'] = user.id
             newPerspectives.append(serialized_data)
         return Response(newPerspectives, status=status.HTTP_200_OK)
 
 
     def post(self, request, dept, subdept, role, format=None):
-        data = JSONParser().parse(request)
-        serializer = PerspectiveSerializer(data=data)
+        # data = JSONParser().parse(request)
+        serializer = PerspectiveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -274,14 +312,15 @@ class DirectorObjectiveAPIView(APIView):
             serializer = ObjectiveSerializer(objective)
             serialized_data = serializer.data
             serialized_data['user'] = objective.user.username
+            serialized_data['user_id'] = user.id
             serialized_data['perspective'] = objective.perspective.perspective_name
             newObjectives.append(serialized_data)
         return Response(newObjectives, status=status.HTTP_200_OK)
 
 
     def post(self, request, dept, role, subdept, format=None):
-        data = JSONParser().parse(request)
-        serializer = ObjectiveSerializer(data=data)
+        # data = JSONParser().parse(request)
+        serializer = ObjectiveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
