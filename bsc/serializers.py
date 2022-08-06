@@ -1,7 +1,16 @@
-from .models import KPI
+from .models import KPI, Objectives, Perspective
 from rest_framework import serializers
 
+class PerspectiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Perspective
+        fields = '__all__'
 
+class ObjectiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Objectives
+        fields = '__all__'
+    
 class KPISerializer(serializers.Serializer):
     kpi_id = serializers.CharField(max_length = 120)
     objective = serializers.CharField(max_length=120)
