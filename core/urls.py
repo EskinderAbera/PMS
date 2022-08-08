@@ -6,6 +6,7 @@ routes = SimpleRouter()
 
 # AUTHENTICATION
 routes.register(r'auth/login', LoginViewSet, basename='auth-login')
+routes.register(r'auth/new/login', LoginView, basename='new-login')
 routes.register(r'auth/register', RegistrationViewSet,
                 basename='auth-register')
 

@@ -195,6 +195,22 @@ class LoginViewSet(ModelViewSet, TokenObtainPairView):
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK) 
 
 
+class LoginView(ModelViewSet, TokenObtainPairView):
+    serializer_class = LoginSerializers
+    permission_classes = (AllowAny,)
+    http_method_names = ["post"]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+        serialized_data = serializer.validated_data
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
 class RegistrationViewSet(ModelViewSet, TokenObtainPairView):
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
