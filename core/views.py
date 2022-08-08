@@ -259,7 +259,7 @@ class UserList(APIView):
                 Users.append(serialized_data)
             else:
                 serialized_data['subdepartment'] = user.subdepartment.name
-            Users.append(serialized_data)
+                Users.append(serialized_data)
         return Response(Users, status=status.HTTP_200_OK)
 
     # def put(self, request, pk, format=None):

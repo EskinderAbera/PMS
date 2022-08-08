@@ -5,7 +5,7 @@ from .models import User, Department, Role, SubDepartment
 
 class UserAdmins(admin.ModelAdmin):
     list_display = ('id', 'username', 'first_name', 'department', 'subdepartment', 'role')
-    search_fields = ("username", "id", "first_name", "department")
+    search_fields = ("username", "id", "first_name")
     readonly_fields = ('date_joined', 'last_login')
 
 admin.site.register(User, UserAdmins)
