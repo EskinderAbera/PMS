@@ -13,7 +13,7 @@ routes.register(r'auth/register', RegistrationViewSet,
 urlpatterns = [
     *routes.urls,
     path('department/', department_list),    
-    path('department/<str:pk>/', department_detail),  
+    path('department/<str:pk>/', department_detail),        
     path('role/', role_list),
     path('role_detail/<str:pk>/', role_detail),
     path('subdepartment/', subdepartment_list),
