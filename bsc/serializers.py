@@ -52,6 +52,12 @@ class AddKPISerializer(serializers.ModelSerializer):
         model = KPI
         fields = ['kpi_id','kpi_name', 'kpi_weight', 'kpi_target', 'perspective', 'objective', 'kpi_unit_measurement', 'user']
 
+class AddActualKPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KPI
+        fields = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+
 
 class CreateKPISerializer(serializers.ModelSerializer):
     class Meta:

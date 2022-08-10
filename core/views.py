@@ -60,13 +60,8 @@ def subdepartment_list(request):
 
     if request.method == 'GET':
         subdepartments = SubDepartment.objects.all()
-        SubDepartments = []
-        for subdepartment in subdepartments:
-            serializer = SubDepartmentSerializer(subdepartment)
-            serialized_data = serializer.data
-            serialized_data['department'] = subdepartment.department.dept_name
-            SubDepartments.append(serialized_data)
-        return JsonResponse(SubDepartments, safe=False)
+        serializer = SubDepartmentSerializer(subdepartments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
         data = JSONParser().parse(request)
@@ -249,28 +244,5 @@ class UserList(APIView):
 
     def get(self, request, format=None):
         users = User.objects.all()
-        Users = []
-        for user in users:
-            serializer = UserSerializer(user)
-            serialized_data = serializer.data
-            serialized_data['department'] = user.department.dept_name
-            serialized_data['role'] = user.role.role_name
-            if user.subdepartment == None:
-                Users.append(serialized_data)
-            else:
-                serialized_data['subdepartment'] = user.subdepartment.name
-                Users.append(serialized_data)
-        return Response(Users, status=status.HTTP_200_OK)
-
-    # def put(self, request, pk, format=None):
-    #     user = self.get_object(pk)
-    #     serializer = RegisterSerializer(user, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # def delete(self, request, pk, format=None):
-    #     user = self.get_object(pk)
-    #     user.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
