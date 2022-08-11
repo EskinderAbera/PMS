@@ -32,6 +32,13 @@ class SubDepartment(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+class Sub_SubDepartment(models.Model):
+    name = models.CharField(max_length=128, blank=True, null=True)
+    subdepartment = models.ForeignKey(SubDepartment, on_delete=models.CASCADE, blank=True, null=True, related_name="subdepartment_user")
+
+    def __str__(self):
+        return f"{self.name}"
+
 
 class UserManager(BaseUserManager):
 
@@ -72,6 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
     subdepartment = models.ForeignKey(SubDepartment, on_delete=models.CASCADE, blank=True, null=True)
+    sub_subdepartment = models.ForeignKey(Sub_SubDepartment, on_delete=models.CASCADE, blank=True, null=True, related_name="sub_subdepartment_user")
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

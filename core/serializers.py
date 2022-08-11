@@ -1,3 +1,4 @@
+from dataclasses import fields
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import update_last_login
@@ -21,6 +22,11 @@ class SubDepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubDepartment
         fields = ['id', 'name', 'department']
+
+class SubSubDepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sub_SubDepartment
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -86,6 +92,9 @@ class RegisterSerializer(UserSerializer):
                 return user
             else:
                 return Response({"Error": "User already Exist!"}, status=status.HTTP_409_CONFLICT)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
 
 
 class KPISerializer(serializers.Serializer):

@@ -19,4 +19,6 @@ urlpatterns = [
     path('subdepartment/', subdepartment_list),
     path('subdepartment_detail/<str:pk>/', subdepartment_detail),
     path('users/', UserList.as_view()),
+    path('subsub/', sub_subdepartment_list),
+    path('subsub/<str:pk>/', sub_subdepartment_detail)
 ]
