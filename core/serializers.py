@@ -40,6 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
             "department",
             "subdepartment",
+            "sub_subdepartment",
             "is_active"
         ]
         read_only_field = ["is_active"]
