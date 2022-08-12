@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from .models import *
 from .serializers import *
@@ -277,3 +277,16 @@ class UserList(APIView):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserEdit(APIView):
+    def put(self, request, pk):
+        try:
+            user = User.objects.get(id = pk)
+        except User.DoesNotExist:
+            return Response({'Error' : 'User does not exist!'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = UserSerializer(user, data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
