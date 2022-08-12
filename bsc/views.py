@@ -115,7 +115,7 @@ class BSCAPIView(APIView):
 
         elif opt == 'perspective':
             try:
-                perspective = Perspective.objects.get(objective_id = pk)
+                perspective = Perspective.objects.get(perspective_id = pk)
             except Perspective.DoesNotExist:
                 return Response({'Error' : 'perspective does not exist!'}, status=status.HTTP_404_NOT_FOUND)
             serializer = PerspectiveSerializer(perspective, data=request.data)
