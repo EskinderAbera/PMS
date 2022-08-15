@@ -17,7 +17,7 @@ class ObjectiveAdmin(admin.ModelAdmin):
 
 class KPIAdmin(admin.ModelAdmin):
     list_display = (
-        'kpi_id', 'perspective', 'objective'
+        'kpi_id', 'perspective', 'objective', 'kpi_name'
     )
     search_fields = ("kpi_id", "kpi_name", "user__id")
 
