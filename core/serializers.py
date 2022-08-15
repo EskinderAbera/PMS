@@ -80,6 +80,7 @@ class RegisterSerializer(UserSerializer):
             "department",
             "role",
             "subdepartment",
+            "sub_subdepartment",
             "is_active",
 
         ]

@@ -19,7 +19,41 @@ class BSCAPIView(APIView):
 
         if opt == 'kpi':
             kpis = user.bsc_user.all()
-            serializer = CreateKPISerializer(kpis, many = True)
+            KPIS = []
+            for kpi in kpis:
+                serializer = KPISerializer(kpi)
+                serialized_data = serializer.data
+                numberOfmonthsLeft = 0
+                if(kpi.January<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.February<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.March<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.April<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.May<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.June<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.July<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.August<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.September<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.October<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.November<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+                if(kpi.December<=0):
+                    numberOfmonthsLeft=numberOfmonthsLeft + 1
+
+                serialized_data['perspective_name'] = kpi.perspective.perspective_name
+                serialized_data['objective_name'] = kpi.objective.objective_name
+                serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
+                KPIS.append(serialized_data)
+            return Response(KPIS, status=status.HTTP_200_OK) 
                 
         elif opt == 'perspective':
             perspectives = user.bsc_perspective.all()

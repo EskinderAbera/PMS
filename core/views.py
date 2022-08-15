@@ -195,37 +195,37 @@ class LoginViewSet(ModelViewSet, TokenObtainPairView):
             actual_aggregate = kpi.January + kpi.February + kpi.March + kpi.April + kpi.May + kpi.June + kpi.July + kpi.August + kpi.September +  kpi.October + kpi.November + kpi.December
             serializer = KPISerializer(kpi)
             serialized_data = serializer.data
-            numberOfmonthsLeft = 0
+            # numberOfmonthsLeft = 0
 
-            if(kpi.January<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.February<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.March<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.April<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.May<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.June<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.July<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.August<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.September<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.October<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.November<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
-            if(kpi.December<=0):
-                numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.January<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.February<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.March<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.April<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.May<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.June<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.July<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.August<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.September<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.October<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.November<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
+            # if(kpi.December<=0):
+            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
 
             serialized_data['actual_aggregate'] = actual_aggregate
             serialized_data['perspective_weight'] = kpi.perspective.perspective_weight
             serialized_data['objective_weight'] = kpi.objective.objective_weight
-            serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
+            # serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
             KPIS.append(serialized_data)
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK) 
 
