@@ -28,6 +28,11 @@ class SubSubDepartmentSerializer(serializers.ModelSerializer):
         model = Sub_SubDepartment
         fields = '__all__'
 
+class IndividualSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Individuals
+        fields = '__all__'
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -81,6 +86,7 @@ class RegisterSerializer(UserSerializer):
             "role",
             "subdepartment",
             "sub_subdepartment",
+            "individuals",
             "is_active",
 
         ]

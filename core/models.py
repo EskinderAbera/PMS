@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
@@ -39,6 +40,15 @@ class Sub_SubDepartment(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+
+class Individuals(models.Model):
+    name = models.CharField(max_length=128, blank=True, null=True)
+    sub_subdepartment = models.ForeignKey(Sub_SubDepartment, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class UserManager(BaseUserManager):
 
     def create_user(self, username, password=None, **extra_fields):
@@ -79,6 +89,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
     subdepartment = models.ForeignKey(SubDepartment, on_delete=models.CASCADE, blank=True, null=True)
     sub_subdepartment = models.ForeignKey(Sub_SubDepartment, on_delete=models.CASCADE, blank=True, null=True, related_name="sub_subdepartment_user")
+    individuals = models.ForeignKey(Individuals, on_delete=models.CASCADE, blank=True, null=True, related_name="individual_user")
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

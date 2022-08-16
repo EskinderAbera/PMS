@@ -21,5 +21,7 @@ urlpatterns = [
     path('users/', UserList.as_view()),
     path('user/<str:pk>/', UserEdit.as_view()),
     path('subsub/', sub_subdepartment_list),
-    path('subsub/<str:pk>/', sub_subdepartment_detail)
+    path('subsub/<str:pk>/', sub_subdepartment_detail),
+    path('individual/', IndividualAPI.as_view()),
+    path('individual/<str:pk>/', EditIndividual.as_view())
 ]

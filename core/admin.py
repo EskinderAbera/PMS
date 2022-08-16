@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Sub_SubDepartment, User, Department, Role, SubDepartment
+from .models import Sub_SubDepartment, User, Department, Role, SubDepartment, Individuals
 
 # Register your models here.
 
@@ -13,3 +13,4 @@ admin.site.register(Department)
 admin.site.register(SubDepartment)
 admin.site.register(Role)
 admin.site.register(Sub_SubDepartment)
+admin.site.register(Individuals)
