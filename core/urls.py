@@ -23,5 +23,7 @@ urlpatterns = [
     path('subsub/', sub_subdepartment_list),
     path('subsub/<str:pk>/', sub_subdepartment_detail),
     path('individual/', IndividualAPI.as_view()),
-    path('individual/<str:pk>/', EditIndividual.as_view())
+    path('individual/<str:pk>/', EditIndividual.as_view()),
+    path('profilepic/', ProfilePicture.as_view()),
+    path('editprofile/<str:pk>/', EditProfilePic.as_view())
 ]

@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
 
@@ -195,37 +196,9 @@ class LoginViewSet(ModelViewSet, TokenObtainPairView):
             actual_aggregate = kpi.January + kpi.February + kpi.March + kpi.April + kpi.May + kpi.June + kpi.July + kpi.August + kpi.September +  kpi.October + kpi.November + kpi.December
             serializer = KPISerializer(kpi)
             serialized_data = serializer.data
-            # numberOfmonthsLeft = 0
-
-            # if(kpi.January<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.February<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.March<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.April<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.May<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.June<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.July<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.August<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.September<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.October<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.November<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-            # if(kpi.December<=0):
-            #     numberOfmonthsLeft=numberOfmonthsLeft + 1
-
             serialized_data['actual_aggregate'] = actual_aggregate
             serialized_data['perspective_weight'] = kpi.perspective.perspective_weight
             serialized_data['objective_weight'] = kpi.objective.objective_weight
-            # serialized_data['numberOfmonthsLeft'] = numberOfmonthsLeft
             KPIS.append(serialized_data)
         return Response(sorted(KPIS, key=lambda x: x['perspective']), status=status.HTTP_200_OK) 
 
@@ -318,3 +291,43 @@ class EditIndividual(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@parser_classes((MultiPartParser, FormParser, JSONParser))
+class ProfilePicture(APIView):
+
+    def get(self, request):
+        pics = ProfilePic.objects.all()
+        serializer = ProfileSerializer(pics, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        try:
+            user = User.objects.get(id = request.data['user'])
+        except User.DoesNotExist:
+            return Response({'Error' : 'User does not exist!'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            serializer = ProfileSerializer(data = request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)
+                
+
+@parser_classes((MultiPartParser, FormParser, JSONParser))
+class EditProfilePic(APIView):
+
+    def put(self, request, pk):
+        try:
+            profile = ProfilePic.objects.get(id = pk)
+        except ProfilePic.DoesNotExist:
+            return Response({'Error' : 'Profile does not exist!'}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            serializer = ProfileSerializer(profile, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            
+

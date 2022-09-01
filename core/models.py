@@ -8,6 +8,8 @@ from django.contrib.auth.models import (
 )
 import uuid
 
+from cloudinary.models import CloudinaryField
+
 # Create your models here.
 
 class Department(models.Model):
@@ -78,7 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50, blank=False, unique=True)
     first_name = models.CharField(max_length=128, blank=True, null=True)
     last_name = models.CharField(max_length=128, blank=True, null=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -97,3 +99,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.username}"
+
+
+class ProfilePic(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user_profile")
+    image = models.ImageField(upload_to='images', blank = True, null = True)
+
+    def __str__(self):
+        return f"{self.user.username}"

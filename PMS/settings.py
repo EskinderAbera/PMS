@@ -16,6 +16,13 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+#cloudinary libraries
+
+
+
+# adding config
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -52,6 +59,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -66,8 +75,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
 
 ROOT_URLCONF = 'PMS.urls'
 
@@ -97,23 +106,23 @@ AUTH_USER_MODEL = "core.User"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd21hd6onskgk42',
-        'USER':'wmkyqpbtsnwxnu',
-        'PASSWORD':'d5959306d7e610be54f79cad050aae2f4c4b0b3a9fa88844dec923722efa0292',
-        'HOST':'ec2-54-208-104-27.compute-1.amazonaws.com',
-        'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'd21hd6onskgk42',
+#         'USER':'wmkyqpbtsnwxnu',
+#         'PASSWORD':'d5959306d7e610be54f79cad050aae2f4c4b0b3a9fa88844dec923722efa0292',
+#         'HOST':'ec2-54-208-104-27.compute-1.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
 
 
 # Password validation
@@ -165,6 +174,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+CLOUDINARY_STORAGE = {
+  'CLOUD_NAME' : "dzpzkqs67", 
+  'API_KEY'  : "567644551517574", 
+  'API_SECRET' : "uRDk3HDGD8TExo9WPg_2kmjCQ3A" 
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

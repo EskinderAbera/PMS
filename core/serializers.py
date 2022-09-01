@@ -1,4 +1,3 @@
-from dataclasses import fields
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import update_last_login
@@ -47,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             "subdepartment",
             "sub_subdepartment",
             "individuals",
-            "is_active"
+            "is_active",
         ]
         read_only_field = ["is_active"]
 
@@ -104,6 +103,13 @@ class RegisterSerializer(UserSerializer):
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+class ProfileSerializer(serializers.ModelSerializer):
+    # user = UserSerializer(user)
+
+    class Meta:
+        model = ProfilePic
+        fields = ['user', 'image']
 
 
 class KPISerializer(serializers.Serializer):

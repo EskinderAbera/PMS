@@ -1,5 +1,4 @@
-from unicodedata import name
-from core.models import Role, Sub_SubDepartment, User, Department, SubDepartment
+from core.models import User
 from rest_framework.views import APIView
 from .models import *
 from rest_framework.response import Response
