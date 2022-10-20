@@ -76,6 +76,7 @@ class BSCAPIView(APIView):
         if opt == 'kpi':
             serializer = CreateKPISerializer(data=request.data)
             if serializer.is_valid():
+                serializer.validated_data['kpi_target'] = int(serializer.validated_data['kpi_q1']) + int(serializer.validated_data['kpi_q2']) + int(serializer.validated_data['kpi_q3']) + int(serializer.validated_data['kpi_q4'])
                 if serializer.validated_data['kpi_unit_measurement'] == "Percentage":
                     serializer.validated_data['kpi_weight'] = float(serializer.validated_data['kpi_weight'])/100
                     serializer.validated_data['kpi_target'] = float(serializer.validated_data['kpi_target'])/100
@@ -120,6 +121,7 @@ class BSCAPIView(APIView):
             serializer = CreateKPISerializer(kpi, data=request.data)
 
             if serializer.is_valid(raise_exception=True):
+                serializer.validated_data['kpi_target'] = int(serializer.validated_data['kpi_q1']) + int(serializer.validated_data['kpi_q2']) + int(serializer.validated_data['kpi_q3']) + int(serializer.validated_data['kpi_q4'])
                 if serializer.validated_data['kpi_unit_measurement'] == "Percentage":
                     serializer.validated_data['kpi_weight'] = float(serializer.validated_data['kpi_weight'])/100
                     serializer.validated_data['kpi_target'] = float(serializer.validated_data['kpi_target'])/100

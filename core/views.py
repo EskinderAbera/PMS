@@ -244,12 +244,12 @@ class RegistrationViewSet(ModelViewSet, TokenObtainPairView):
             status=status.HTTP_201_CREATED,
         )
 
-class UserList(APIView):
+# class UserList(APIView):
 
-    def get(self, request, format=None):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request, format=None):
+#         users = User.objects.all()
+#         serializer = UserSerializer(users, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserEdit(APIView):
     def put(self, request, pk):

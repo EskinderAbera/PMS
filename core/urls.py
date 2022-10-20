@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import *
+from core.Views.User.views import *
+from core.Views.Department.views import *
+from core.Views.Individual.views import *
+from core.Views.Roles.views import *
+from core.Views.Subdepartments.views import *
+from core.Views.SubSubDepartment.views import *
 from rest_framework.routers import SimpleRouter
 
 routes = SimpleRouter()
