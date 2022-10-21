@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from core.models import User
 from django.utils.translation import gettext_lazy as _
@@ -30,10 +31,10 @@ class KPI(models.Model):
     kpi_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     kpi_name = models.CharField(max_length=120, blank=False)
     kpi_target = models.FloatField(blank=True, default=0)
-    kpi_q1 = models.IntegerField(blank = True, null = True)
-    kpi_q2 = models.IntegerField(blank = True, null = True)
-    kpi_q3 = models.IntegerField(blank = True, null = True)
-    kpi_q4 = models.IntegerField(blank = True, null = True)
+    kpi_q1 = models.IntegerField(default=0)
+    kpi_q2 = models.IntegerField(default=0)
+    kpi_q3 = models.IntegerField(default=0)
+    kpi_q4 = models.IntegerField(default=0)
     kpi_weight = models.FloatField(blank=True, default=0)
 
     class Types(models.TextChoices):
